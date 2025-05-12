@@ -1,0 +1,73 @@
+model User {
+    id           String        @id @default(cuid())
+    name         String
+    email        String        @unique
+    password     String
+    role         String // e.g., "staff" or "manager"
+    shifts       Shift[]
+    swapRequests SwapRequest[]
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+}
+
+model Shift {
+    id          String        @id @default(cuid())
+    userId      String
+    date        DateTime
+    startTime   String
+    endTime     String
+    role        String
+    location    String
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    user        User          @relation(fields: [userId], references: [id])
+    SwapRequest SwapRequest[]
+}
+
+model SwapRequest {
+    id         String      @id @default(cuid())
+    userId     String
+    shiftId    String
+    date       DateTime
+    startTime  String
+    endTime    String
+    role       String
+    location   String
+    status     String // e.g., "pending", "matched", "approved", "rejected", "completed"
+    reason     String
+    volunteers Volunteer[]
+    createdAt  DateTime    @default(now())
+    updatedAt  DateTime    @updatedAt
+    user       User        @relation(fields: [userId], references: [id])
+    shift      Shift       @relation(fields: [shiftId], references: [id])
+    Approval   Approval[]
+}
+
+model Volunteer {
+    id            String      @id @default(cuid())
+    userId        String
+    swapRequestId String
+    name          String
+    role          String
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+    swapRequest   SwapRequest @relation(fields: [swapRequestId], references: [id])
+}
+
+model Approval {
+    id            String      @id @default(cuid())
+    swapRequestId String
+    status        String // e.g., "approved", "rejected"
+    reason        String?
+    decidedAt     DateTime    @default(now())
+    swapRequest   SwapRequest @relation(fields: [swapRequestId], references: [id])
+}
+
+datasource db {
+    provider = "postgresql" // or your preferred database provider
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
