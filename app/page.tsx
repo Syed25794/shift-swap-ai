@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export default function Home() {
+  console.log('DATABASE_URL in prod:', process.env.DATABASE_URL);
   return (
     <div className="flex min-h-screen flex-col">
       <header className="bg-background border-b">
