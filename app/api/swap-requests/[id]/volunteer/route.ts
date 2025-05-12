@@ -72,7 +72,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { note } = await request.json()
+    const { note, shiftId } = await request.json()
     const swapRequest = await prisma.swapRequest.findUnique({
       where: { id: params.id },
       include: { volunteers: true },
@@ -97,6 +97,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       userId: authResult?.user?.id,
       name: authResult?.user?.name,
       role: authResult?.user?.role,
+      shiftId: shiftId,
       createdAt: new Date(),
     }
 

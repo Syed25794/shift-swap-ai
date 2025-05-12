@@ -89,6 +89,12 @@ export default function LoginPage() {
               Register
             </Link>
           </div>
+
+           <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              <Link href="/" className="text-primary underline-offset-4 hover:underline">
+                Back to HomePage
+              </Link>
+            </div>
         </CardFooter>
       </Card>
     </div>

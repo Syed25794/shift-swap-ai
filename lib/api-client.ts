@@ -86,7 +86,7 @@ export const swapRequestsApi = {
       method: "DELETE",
     })
   },
-  volunteerForSwap: (id: string, data: { note?: string }) => {
+  volunteerForSwap: (id: string, data: { note?: string, shiftId?:string }) => {
     return fetchApi(`/api/swap-requests/${id}/volunteer`, {
       method: "POST",
       body: data,

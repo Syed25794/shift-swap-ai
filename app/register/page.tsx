@@ -96,13 +96,15 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Role</Label>
-              <div className="flex gap-2">
+              <Label className="text-sm font-medium">Role</Label>
+              <div className="flex gap-4">
                 <button
                   type="button"
                   className={cn(
-                    "px-4 py-2 rounded-full border",
-                    role === "staff" ? "bg-primary text-white" : "bg-gray-200"
+                    "px-6 py-2 rounded-full border transition-colors duration-200",
+                    role === "staff"
+                      ? "bg-primary text-white border-primary"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-100"
                   )}
                   onClick={() => setRole("staff")}
                 >
@@ -111,8 +113,10 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   className={cn(
-                    "px-4 py-2 rounded-full border",
-                    role === "manager" ? "bg-primary text-white" : "bg-gray-200"
+                    "px-6 py-2 rounded-full border transition-colors duration-200",
+                    role === "manager"
+                      ? "bg-primary text-white border-primary"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-100"
                   )}
                   onClick={() => setRole("manager")}
                 >
@@ -130,6 +134,12 @@ export default function RegisterPage() {
             Already have an account?{" "}
             <Link href="/login" className="text-primary underline-offset-4 hover:underline">
               Login
+            </Link>
+          </div>
+
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            <Link href="/" className="text-primary underline-offset-4 hover:underline">
+              Back to HomePage
             </Link>
           </div>
         </CardFooter>

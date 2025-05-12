@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/lib/auth-context"
-import { openSwapsApi, swapRequestsApi } from "@/lib/api-client"
+import { openSwapsApi, shiftsApi, swapRequestsApi } from "@/lib/api-client"
 import { toast } from "@/components/ui/use-toast"
 
 type OpenSwap = {
@@ -49,12 +49,29 @@ export default function OpenSwapsPage() {
   const [openSwaps, setOpenSwaps] = useState<OpenSwap[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [shifts, setShifts] = useState<any[]>([])
+  const [selectedShift, setSelectedShift] = useState<any>(null)
 
   useEffect(() => {
     if (user) {
       loadOpenSwaps()
+      getShiftsAll()
     }
   }, [user, roleFilter])
+
+  const getShiftsAll = async () => {
+    try {
+      const response = await shiftsApi.getShifts()
+      setShifts(response.shifts)
+    } catch (error) {
+      console.error("Error loading shifts:", error)
+      toast({
+        title: "Error",
+        description: "Failed to load shifts. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
 
   const loadOpenSwaps = async () => {
     try {
@@ -96,7 +113,7 @@ export default function OpenSwapsPage() {
 
     try {
       setIsSubmitting(true)
-      await swapRequestsApi.volunteerForSwap(selectedSwap.id, { note: volunteerNote })
+      await swapRequestsApi.volunteerForSwap(selectedSwap.id, { note: volunteerNote, shiftId : selectedShift.id })
 
       toast({
         title: "Success",
@@ -251,13 +268,38 @@ export default function OpenSwapsPage() {
                   onChange={(e) => setVolunteerNote(e.target.value)}
                 />
               </div>
+              {shifts.length > 0 && (  
+                <div className="space-y-2">
+                  <Label htmlFor="shift">Select a shift to volunteer for</Label>
+                  <Select
+                    onValueChange={(value) => {
+                      const selected = shifts.find((shift) => shift.id === value)
+                      setSelectedShift(selected)
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a shift" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {shifts.map((shift) => (
+                        <SelectItem key={shift.id} value={shift.id}>
+                          {`${new Date(shift.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })} - ${shift.startTime} to ${shift.endTime} (${shift.role})`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsVolunteerDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSubmitVolunteer} disabled={isSubmitting}>
+            <Button onClick={handleSubmitVolunteer} disabled={isSubmitting || selectedShift === null}>
               {isSubmitting ? "Submitting..." : "Confirm Volunteer"}
             </Button>
           </DialogFooter>
