@@ -24,9 +24,9 @@
 
 import { NextResponse } from "next/server"
 import jwt from "jsonwebtoken"
-import { PrismaClient } from "@prisma/client"
+import { prisma} from "@/lib/prisma"
 
-const prisma = new PrismaClient()
+
 
 export async function POST(request: Request) {
   try {

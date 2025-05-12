@@ -154,9 +154,9 @@
 
 import { NextResponse } from "next/server"
 import { verifyAuth } from "@/lib/auth-utils"
-import { PrismaClient } from '@prisma/client'
+import { prisma} from '@/lib/prisma'
 
-const prisma = new PrismaClient()
+
 
 export async function GET(request: Request) {
   try {

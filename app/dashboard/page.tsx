@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Calendar, Clock, RefreshCcw, Users } from "lucide-react"
 import Link from "next/link"
 import React, { useEffect } from "react"
-import { Shift } from "@prisma/client"
+import { Shift } from "@/lib/prisma"
 import { fetchApi } from "@/lib/api-client"
 
 export default function DashboardPage() {
@@ -126,12 +126,14 @@ export default function DashboardPage() {
             <CardContent>
             <div className="space-y-4">
   {shifts.map((shift, index) => {
+    const volunteer = allSwaps.filter((swap) => swap.volunteers[0].shiftId === shift.id)
+    console.log('volunteer', volunteer[0],volunteer.length)
     // Determine whether to use data from SwapRequest or the shift itself
     const swapRequest = shift?.SwapRequest?.length > 0 ? shift?.SwapRequest[0] : null
     const date = swapRequest ? swapRequest.date : shift.date
-                const startTime = swapRequest ? swapRequest.startTime : shift.startTime
-                const endTime = swapRequest ? swapRequest.endTime : shift.endTime
-                const role = swapRequest ? swapRequest.role : shift.role
+    const startTime = swapRequest ? swapRequest.startTime : shift.startTime
+    const endTime = swapRequest ? swapRequest.endTime : shift.endTime
+    const role = swapRequest ? swapRequest.role : shift.role
     const location = swapRequest ? swapRequest.location : shift.location
 
     return (
@@ -149,7 +151,25 @@ export default function DashboardPage() {
           <div className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
             {role}
           </div>
-                      {!swapRequest ? (
+                      { volunteer.length > 0 ? (
+            <div className="flex items-center gap-2">
+                              {volunteer[0]?.status === "approved" && (
+                <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                  Successfully Swapped for volunteer
+                </div>
+              )}
+                              {volunteer[0]?.status === "pending" && (
+                <div className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
+                  Pending Approval for volunteer
+                </div>
+              )}
+                              {volunteer[0]?.status === "rejected" && (
+                <div className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+                  Swap volunteer Rejected
+                </div>
+              )}
+            </div>
+          ) :!swapRequest  ? (
             <Button variant="outline" size="sm" asChild>
               <Link href="/dashboard/swap-requests">Request Swap</Link>
             </Button>
